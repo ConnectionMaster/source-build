@@ -4,40 +4,39 @@ To get each repo building with the new source-build sustainability plan, [Arcade
 
 Below, the repo status is in a graph to show the dependencies and make it easy to tell which repos are ready to work on. There's also a table, for searchable and more detailed status. These will both be kept up to date.
 
-> ![](img/implementation-plan-graph.svg)  
+> ![](https://pointillism.io/dotnet/source-build/blob/master/Documentation/planning/arcade-powered-source-build/img/implementation-plan-graph.dot.svg)  
 > [source (img/implementation-plan-graph.dot)](img/implementation-plan-graph.dot)
 
-| Tier | Repo | Owner | Input intermediate packages available | (Stage 1)<br>Local build infra merged | (Stage 2)<br>CI implemented | (Stage 3)<br>Artifacts greenlit | (Stage 4)<br>Prebuilt regressions blocked |
-| --- | --- | --- | :---: | :---: | :---: | :---: | :---: |
-| sbrp | Source-build-reference-packages | [Dan Seefeldt](https://github.com/dseefeld) | ✔️ | ✔️ | ✔️ | ✔️ | |
-| Tools | sourcelink | [Tomas Matousek](https://github.com/tmat) | ✔️ | ✔️ | ✔️ | ✔️ | |
-| Tools | arcade | [Mark Wilkie](https://github.com/markwilkie) | ✔️ | ✔️ | | | |
-| 1 | *application-insights*<sup>1</sup> | ? | ✔️ | | | | |
-| 1 | *cssparser*<sup>1</sup> | ? | ✔️ | | | | |
-| 1 | *humanizer*<sup>1</sup> | ? | ✔️ | | | | |
-| 1 | *netcorecli-fsc*<sup>1</sup> | [Chris Rummel](https://github.com/crummel) | ✔️ | | | | |
-| 1 | *newtonsoft-json*<sup>1</sup> | [Chris Rummel](https://github.com/crummel) | ✔️ | | | | |
-| 1 | *newtonsoft-json901*<sup>1</sup> | [Chris Rummel](https://github.com/crummel) | ✔️ | | | | |
-| 1 | aspnet-xdt | [Vijay Ramakrishnan](https://github.com/vijayrkn) | | | | | |
-| 1 | clicommandlineparser | [Sarah Oslund](https://github.com/sfoslund) | | | | | |
-| 1 | command-line-api | [?](https://github.com/) | | | | | |
-| 1 | diagnostics | ? | ✔️ | | | | |
-| 1 | roslyn | [Fred Silberberg](https://github.com/333fred) | | | | | |
-| 1 | symreader | ? | | | | | |
-| 1 | test-templates | ? | | | | | |
-| 1 | xliff-tasks | [Mark Wilkie](https://github.com/markwilkie) | ✔️ | | | | |
-| 2 | linker | [Dan Seefeldt](https://github.com/dseefeld) | ✔️ | | | | |
-| 2 | msbuild | [Ben Villalobos](https://github.com/BenVillalobos) | | | | | |
-| 2 | NuGet.Client | [Fernando Aguilar Reyes](https://github.com/dominoFire) | | | | | |
-| 2 | runtime | [Jared Parsons](https://github.com/jaredpar) | | | | | |
-| 2 | templating | [Vlada Shubina](https://github.com/vlada-shubina) | | | | | |
-| 3 | roslyn-analyzers | [Jonathon Marolf](https://github.com/jmarolf) | | | | | |
-| 4 | aspnetcore | [John Luo](https://github.com/JunTaoLuo) | | | | | |
-| 4 | websdk | [Vijay Ramakrishnan](https://github.com/vijayrkn) | | | | | |
-| 5 | fsharp | [Brett Forsgren](https://github.com/brettfo) | | | | | |
-| 5 | sdk | [Sarah Oslund](https://github.com/sfoslund) | | | | | |
-| 5 | vstest | [Jakub Jares](https://github.com/nohwnd) | | | | | |
-| 6 | installer | [Sarah Oslund](https://github.com/sfoslund) | | | | | |
+| Tier | Repo | Owner | Tracking Issue | Input intermediate packages available | (Stage 1)<br>Local build infra merged | (Stage 2)<br>CI implemented | (Stage 3)<br>Artifacts greenlit | (Stage 4)<br>Prebuilt regressions blocked |
+| --- | --- | --- | :---: | :---: | :---: | :---: | :---: | :---: |
+| sbrp | [source-build-reference-packages](https://github.com/dotnet/source-build-reference-packages) | [Dan Seefeldt](https://github.com/dseefeld) | | ✔️ | ✔️ | ✔️ | ✔️ | |
+| Tools | [sourcelink](https://github.com/dotnet/sourcelink) | [Tomas Matousek](https://github.com/tmat) | | ✔️ | ✔️ | ✔️ | ✔️ | |
+| Tools | [arcade](https://github.com/dotnet/arcade) | [Mark Wilkie](https://github.com/markwilkie) | | ✔️ | ✔️ | ✔️ | ✔️ | |
+| 1 | *[application-insights](https://github.com/dotnet/source-build/tree/master/src)*<sup>1</sup> | ? | | ✔️ | ✔️ | ✔️ | ✔️ | |
+| 1 | *[cssparser](https://github.com/dotnet/source-build/tree/master/src)*<sup>1</sup> | ? | | ✔️ | ✔️ | ✔️ | ✔️ | |
+| 1 | *[humanizer](https://github.com/dotnet/source-build/tree/master/src)*<sup>1</sup> | ? | | ✔️ | ✔️ | ✔️ | ✔️ | |
+| 1 | *[netcorecli-fsc](https://github.com/dotnet/source-build/tree/master/src)*<sup>1</sup> | [Chris Rummel](https://github.com/crummel) | | ✔️ | ✔️ | ✔️ | ✔️ | |
+| 1 | *[newtonsoft-json](https://github.com/dotnet/source-build/tree/master/src)*<sup>1</sup> | [Chris Rummel](https://github.com/crummel) | | ✔️ | ✔️ | ✔️ | ✔️ | |
+| 1 | *[newtonsoft-json901](https://github.com/dotnet/source-build/tree/master/src)*<sup>1</sup> | [Chris Rummel](https://github.com/crummel) | | ✔️ | ✔️ | ✔️ | ✔️ | |
+| 1 | [aspnet-xdt](https://github.com/dotnet/xdt) | [Vijay Ramakrishnan](https://github.com/vijayrkn) | [issue](https://github.com/dotnet/source-build/issues/2036) | ✔️ | ✔️ | ✔️ | ✔️ | |
+| 1 | [clicommandlineparser](https://github.com/dotnet/clicommandlineparser) | [Sarah Oslund](https://github.com/sfoslund) | [issue](https://github.com/dotnet/source-build/issues/2037) | ✔️ | ⏱ / ❗[blocked](https://github.com/dotnet/CliCommandLineParser/issues/180) | | | |
+| 1 | [command-line-api](https://github.com/dotnet/command-line-api) | ? | [issue](https://github.com/dotnet/source-build/issues/2038) | ✔️ | ✔️ | ✔️ | ✔️ | |
+| 1 | [diagnostics](https://github.com/dotnet/diagnostics) | [Juan Hoyes](https://github.com/hoyosjs) | [issue](https://github.com/dotnet/source-build/issues/2039) | ✔️ | ✔️ | [CI issue](https://github.com/dotnet/diagnostics/issues/2059) | | |
+| 1 | [roslyn](https://github.com/dotnet/roslyn) | [Fred Silberberg](https://github.com/333fred) | [issue](https://github.com/dotnet/source-build/issues/2067) | | ⏱ / ❗[Blocked](https://github.com/dotnet/roslyn/pull/51647) | | | |
+| 1 | [symreader](https://github.com/dotnet/symreader) | [Tomas Matousek](https://github.com/tmat) | [issue](https://github.com/dotnet/source-build/issues/2040) | ✔️ | ✔️ | ✔️ | ❗[Blocked](https://github.com/dotnet/symreader/issues/236) | |
+| 1 | [test-templates](https://github.com/dotnet/test-templates) | ? | [issue](https://github.com/dotnet/source-build/issues/2041) | ✔️ | ✔️ | ✔️ | ✔️ | |
+| 1 | [xliff-tasks](https://github.com/dotnet/xliff-tasks) | [Mark Wilkie](https://github.com/markwilkie) | [issue](https://github.com/dotnet/source-build/issues/2042) | ✔️ | ✔️ | ✔️ | ✔️ | |
+| 2 | [linker](https://github.com/mono/linker) | [Dan Seefeldt](https://github.com/dseefeld) | [issue](https://github.com/dotnet/source-build/issues/2043) | ✔️ | ✔️ | ✔️ | ✔️ | |
+| 2 | [msbuild](https://github.com/dotnet/msbuild) | [Ben Villalobos](https://github.com/BenVillalobos) | [issue](https://github.com/dotnet/source-build/issues/2068) | | ❗[Blocked](https://github.com/dotnet/msbuild/pull/6226) | | | |
+| 2 | [NuGet.Client](https://github.com/NuGet/NuGet.Client) | [Fernando Aguilar Reyes](https://github.com/dominoFire) |[issue](https://github.com/dotnet/source-build/issues/2069) | | ⏱[PR](https://github.com/NuGet/NuGet.Client/pull/3945) / ❗[blocked](https://github.com/NuGet/Home/issues/10646)  | | | |
+| 2 | [runtime](https://github.com/dotnet/runtime) | [Jared Parsons](https://github.com/jaredpar) | [issue](https://github.com/dotnet/source-build/issues/2052) | | | | | |
+| 2 | [templating](https://github.com/dotnet/templating) | [Vlada Shubina](https://github.com/vlada-shubina) |[issue](https://github.com/dotnet/source-build/issues/2070)  | | ✔️ | | | |
+| 3 | [roslyn-analyzers](https://github.com/dotnet/roslyn-analyzers) | [Jonathon Marolf](https://github.com/jmarolf) | [issue](https://github.com/dotnet/source-build/issues/2071) | | ⏱[PR](https://github.com/dotnet/roslyn-analyzers/pull/4930)| | | |
+| 4 | [aspnetcore](https://github.com/dotnet/aspnetcore) | [John Luo](https://github.com/JunTaoLuo) | [issue](https://github.com/dotnet/source-build/issues/2072) | | ⏱ | | | |
+| 5 | [fsharp](https://github.com/dotnet/fsharp) | [Brett Forsgren](https://github.com/brettfo) | [issue](https://github.com/dotnet/source-build/issues/2074) | | ⏱[PR](https://github.com/dotnet/fsharp/pull/11208) | | | |
+| 5 | [sdk](https://github.com/dotnet/sdk) | [Sarah Oslund](https://github.com/sfoslund) / [Vijay Ramakrishnan](https://github.com/vijayrkn)(web)| [issue](https://github.com/dotnet/source-build/issues/2075) | | | | | |
+| 5 | [vstest](https://github.com/microsoft/vstest) | [Jakub Jares](https://github.com/nohwnd) | [issue](https://github.com/dotnet/source-build/issues/2076) | | ❗[Blocked](https://github.com/microsoft/vstest/issues/2804) | | | |
+| 6 | [installer](https://github.com/dotnet/installer) | [Sarah Oslund](https://github.com/sfoslund) | [issue](https://github.com/dotnet/source-build/issues/2077) | | | | | |
 
 | Status | Description |
 | --- | --- |
@@ -53,18 +52,40 @@ Below, the repo status is in a graph to show the dependencies and make it easy t
     - (**Repo team**) Review PR and merge.
       - Merging into main/master strongly preferred.
       - If a dev branch is created, the repo team must merge it into main/master before ending stage (3).
+	- Exit criteria:
+	  - Local dev build works.
+	  - Source-build intermediate packages are produced.
+		- Intermediate packages contain the same set of packages as the in-progress 6.0 branch or the 5.0 branch.
+	  - Prebuilts are reviewed (best effort basis).
+	    - It will be difficult to determine if all prebuilts are correct before we have the whole graph building.
+		- Packages built earlier in the source-build graph should not be using external prebuilts if the source-build intermediates for those are ready.
+	  - If the target repo already has source-build CI, it is upgraded to ArPow.
+    - After completing this step:
+	    - Log an issue in the target repo to remove source-build patches.
+	    - Log an issue in the target repo to enable source-build CI.
   - **(2) CI implemented** (PR + Official)
     - (**Repo team**) Submit PR adding source-build CI jobs and merge.
       - Let us know, and send us a link to an official build that includes the changes. We will start on (3).
     - *Async (**Repo team**) Incorporate `.patch` files into repo.*
       - *High impact: if these patch files have conflicts, CI fails.*
+    - Exit criteria:
+      - All source-build patches are removed.
+      - Source-build CI in the target repo is green and runs on PRs and checkins.
   - **(3) Artifacts greenlit** for downstream usage
     - (Source-build) Validate "intermediate nupkg" artifact and logs.
     - (Source-build) Preliminary check for unexpected prebuilt usage.
     - (Source-build + **repo team**) Fix up problems if found.
+    - Exit criteria:
+      - CI is reviewed.
+      - CI runs on release builds, checkins, and PRs.
+      - Intermediate packages are produced and published to BAR.
+      - Source-build team verifies that all expected packages are included in the intermediate packages.
   - **(4) Prebuilt regressions blocked**
     - (Source-build) Submit PR enabling prebuilt baseline enforcement.
       - Prebuilt binary usage is expected because this is a "production build", not a "tarball build".
       - Prebuilt usage baseline enforcement prevents prebuilt regression.
       - We will only do this once enforcement errors are actionable.
+      - Exit criteria:
+        - A prebuilt baseline is established with specific packages and versions (not wildcards).
+        - New prebuilt detection is enabled in CI in the target repo.
     - (**Repo team**) Review PR and merge.

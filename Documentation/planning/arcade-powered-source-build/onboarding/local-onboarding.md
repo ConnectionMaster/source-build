@@ -10,8 +10,46 @@ The source code for the build tasks that run for prebuilt validation and
 intermediate nupkg dependency reading are maintained at
 [dotnet/arcade/.../Microsoft.DotNet.SourceBuild](https://github.com/dotnet/arcade/tree/master/src/Microsoft.DotNet.SourceBuild).
 
+## Trying it out locally
+
+After someone sets up arcade-powered source-build in a repo, running it locally
+is done by passing `/p:ArcadeBuildFromSource=true` at the end of the usual
+arcade-based build command for the repo. For example:
+
+```
+./build.sh -c Release --restore --build --pack /p:ArcadeBuildFromSource=true -bl
+```
+
+> Note: [source-build is not supported on
+> Windows](https://github.com/dotnet/source-build/issues/1190), only Linux and
+> macOS.
+
+After running the build, source-build artifacts will be in
+`artifacts/source-build`, and the [intermediate nupkg] will be something like
+`artifacts/packages/*/Microsoft.SourceBuild.Intermediate.*.nupkg`.
+
+The MSBuild binlog will be placed somewhere like:
+`artifacts/log/Debug/Build.binlog`. However, this "outer" binlog doesn't contain
+the meat of the build: the "inner" build runs inside an `Exec` task. The inner
+binlog will be written to:
+`artifacts/source-build/self/src/artifacts/sourcebuild.binlog`.
 
 ## Source-build configuration overview
+
+These changes are all needed before the inner source-build will work:
+
+* [`eng/SourceBuild.props`](#engsourcebuildprops) - Basic properties, such as
+  repo name.
+* [`eng/SourceBuildPrebuiltBaseline.xml`](#engsourcebuildprebuiltbaselinexml) -
+  Allow prebuilts. Until stage 4, we allow all prebuilts.
+* [`eng/Version.Details.xml`](#engversiondetailsxml) - Already exists, but
+  modifications are needed to pull dependencies from upstream intermediate
+  nupkgs.
+* [Patching](#patching). - The initial onboarding process includes putting any
+  required patches into the repo. Some may be incorporated directly, but some
+  may still be `.patch` files.
+
+See the below sections for details:
 
 ### `eng/SourceBuild.props`
 
@@ -97,27 +135,87 @@ nupkg] ID. For example, running source-build on `dotnet/installer` with
 * `Microsoft.SourceBuild.Intermediate.source-build-reference-packages`
   * Ends with the `RepoName` without a suffix because `ManagedOnly="true"`.
 
+#### Supplemental intermediate nupkgs
 
-# Trying it out locally
+If the repo needs to *produce* [supplemental intermediate nupkgs], this needs to
+be configured. Exact implementation is to-be-documented. The repo needs to map
+each artifact to a supplemental category. Ideally this info can be stored in the
+project file responsible for producing each artifact, for maintainability.
+However, the faster approach is to use pattern matching to assign filenames in
+`artifacts/` to specific categories. This will likely be worked on
+incrementally.
 
-Running source-build locally is done by passing `/p:ArcadeBuildFromSource=true`
-at the end of the usual arcade-based build command for the repo. For example:
+If the repo needs to *consume* [supplemental intermediate nupkgs] from an
+upstream, extra `<Supplemental ... />` elements need to be added to
+`eng/Version.Details.xml`. For example:
+
+```xml
+<Dependency Name="Microsoft.NETCore.App.Runtime.win-x64" Version="6.0.0">
+  <Uri>https://github.com/dotnet/runtime</Uri>
+  <Sha>d9069470a108f13765e0e5988f51cf258a14b70a</Sha>
+  <SourceBuild RepoName="runtime">
+    <Supplemental Name="Microsoft.NETCore.App.Ref" />
+    <Supplemental Name="Microsoft.NETCore.App.Ref.archive" />
+    <Supplemental Name="Microsoft.NETCore.App.Runtime" />
+    <Supplemental Name="Microsoft.NETCore.App.Runtime.archive" />
+    <Supplemental Name="Microsoft.NETCore.App.Host" />
+    <Supplemental Name="Microsoft.NETCore.App.Host.archive" />
+    <Supplemental Name="Microsoft.NETCore.App.Crossgen2" />
+    <Supplemental Name="Microsoft.NETCore.App.Crossgen2.archive" />
+    <Supplemental Name="libraries" />
+    <Supplemental Name="coreclr" />
+  </SourceBuild>
+</Dependency>
+```
+
+This causes source-build to download:
 
 ```
-./build.sh -c Release --restore --build --pack /p:ArcadeBuildFromSource=true -bl
+Microsoft.DotNet.SourceBuild.runtime.linux-x64
+Microsoft.DotNet.SourceBuild.runtime.Microsoft.NETCore.App.Ref.linux-x64
+Microsoft.DotNet.SourceBuild.runtime.Microsoft.NETCore.App.Ref.archive.linux-x64
+...
+Microsoft.DotNet.SourceBuild.runtime.coreclr.linux-x64
 ```
 
-> Note: [source-build is not supported on
-> Windows](https://github.com/dotnet/source-build/issues/1190), only Linux and
-> macOS.
+The list of available supplemental intermediate nupkgs for a given repo can be
+found inside the repo's "base" intermediate nupkg, e.g.
+`Microsoft.DotNet.SourceBuild.runtime.linux-x64`.
 
-After running the build, source-build artifacts will be in
-`artifacts/source-build`, and the [intermediate nupkg] will be something like
-`artifacts/packages/*/Microsoft.SourceBuild.Intermediate.*.nupkg`.
+### Patching
 
-It isn't strictly necessary to try it out locally to proceed with CI onboarding.
-The source-build contributor who submits the initial configuration PR to the
-repo will have tested out the build locally themselves.
+Look at <https://github.com/dotnet/source-build/tree/release/5.0/patches> to
+see if the repo needs patches.
+
+For each patch that will obviously work without breaking the Microsoft build,
+use `git am` to incorporate it. This is subjective: if there's any question,
+don't incorporate it yet.
+
+For each patch that isn't incorporated directly:
+* Place the patches in `eng/source-build-patches/*.patch`.
+* Add a target into `eng/SourceBuild.props` that applies the patches just before
+  the build from source:
+
+```xml
+  <Target Name="ApplySourceBuildPatchFiles"
+          Condition="
+            '$(ArcadeBuildFromSource)' == 'true' and
+            '$(ArcadeInnerBuildFromSource)' == 'true'"
+          BeforeTargets="Execute">
+    <ItemGroup>
+      <SourceBuildPatchFile Include="$(RepositoryEngineeringDir)source-build-patches\*.patch" />
+    </ItemGroup>
+
+    <Exec
+      Command="git apply --ignore-whitespace --whitespace=nowarn &quot;%(SourceBuildPatchFile.FullPath)&quot;"
+      WorkingDirectory="$(RepoRoot)"
+      Condition="'@(SourceBuildPatchFile)' != ''" />
+  </Target>
+```
+
+> Example is from dotnet/arcade before its `.patch` files were incorporated:
+<https://github.com/dotnet/arcade/blob/681511f2f63a3563494f1f27904b2842abef6b35/eng/SourceBuild.props>
 
 
-[intermediate nupkg]: https://github.com/dotnet/source-build/blob/release/3.1/Documentation/planning/arcade-powered-source-build/intermediate-nupkg.md
+[intermediate nupkg]: https://github.com/dotnet/source-build/blob/master/Documentation/planning/arcade-powered-source-build/intermediate-nupkg.md
+[supplemental intermediate nupkgs]: https://github.com/dotnet/source-build/blob/master/Documentation/planning/arcade-powered-source-build/intermediate-nupkg.md#too-large
